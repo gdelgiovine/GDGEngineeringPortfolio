@@ -32,7 +32,7 @@ The projects below are not tutorial exercises. They are engineering products des
 - SharePoint Online and SharePoint Server interoperability
 - legacy and modern .NET coexistence
 - REST, OData, CAML and SPFx integration
-- migration and provisioning
+- migration, reusable template packaging and repeatable provisioning
 - relational data abstractions
 - authentication and identity
 - asynchronous and concurrent processing
@@ -45,41 +45,37 @@ My objective is simple:
 
 ---
 
-# Three SharePoint engineering products
+# Four SharePoint engineering products
 
-```mermaid
-%%{init: {'theme':'base','themeVariables':{
-  'primaryColor':'#0B5CAD',
-  'primaryTextColor':'#FFFFFF',
-  'primaryBorderColor':'#0B5CAD',
-  'lineColor':'#64748B',
-  'secondaryColor':'#512BD4',
-  'tertiaryColor':'#038387'
-}}}%%
+These products address complementary problems in the SharePoint and Microsoft 365 ecosystem. The first three focus on data access, migration and integration; the fourth focuses on reusable templates and provisioning.
+
+~~~mermaid
 flowchart LR
-    DATA["DATA ACCESS<br/><b>GDG.SP.ADOProvider</b><br/>ADO.NET · SQL · REST"]
-    MIG["MIGRATION<br/><b>GDG SPMigrator</b><br/>On-Premises → Online"]
-    BRIDGE["MODERN INTEGRATION<br/><b>GDG.SPFX.Bridge</b><br/>SPFx ↔ .NET"]
+    DATA["DATA ACCESS<br/>GDG.SP.ADOProvider<br/>SQL · ADO.NET · REST"]
+    MIG["MIGRATION<br/>GDG SPMigrator<br/>On-premises → Online"]
+    BRIDGE["INTEGRATION<br/>GDG.SPFX.Bridge<br/>SPFx ↔ .NET"]
+    TM["TEMPLATES<br/>GDG.SP.TemplateManager<br/>Capture · Inspect · Provision"]
 
     DATA --- MIG
     MIG --- BRIDGE
+    BRIDGE --- TM
 
     classDef data fill:#512BD4,color:#fff,stroke:#512BD4;
     classDef mig fill:#0B5CAD,color:#fff,stroke:#0B5CAD;
     classDef bridge fill:#038387,color:#fff,stroke:#038387;
-
+    classDef tm fill:#6A5099,color:#fff,stroke:#6A5099;
     class DATA data;
     class MIG mig;
     class BRIDGE bridge;
-```
+    class TM tm;
+~~~
 
-These three products address three different SharePoint engineering problems:
-
-| Product | Problem solved | Engineering evidence |
+| Product | Engineering problem | What it demonstrates |
 |---|---|---|
-| **GDG.SP.ADOProvider** | Treat SharePoint as an application data source through a familiar ADO.NET programming model | data-provider architecture, SQL parsing, relational execution, query planning, REST/CAML/OData, caching, batching, async, compatibility |
-| **GDG SPMigrator** | Move SharePoint structures and content from on-premises environments to SharePoint Online | migration architecture, provisioning, identity/ACL handling, schema compatibility, task orchestration, diagnostics, recovery |
-| **GDG.SPFX.Bridge** | Connect modern SharePoint Framework experiences with server-side .NET applications | SPFx, TypeScript, browser/server messaging, SharePoint context, Dynamic Data, CRUD, routing, native list refresh |
+| **GDG.SP.ADOProvider** | Access SharePoint lists, files and attachments through familiar .NET data APIs | ADO.NET provider, SQL parser/optimizer, CAML/OData/REST, relational operators, Dapper and real WinForms applications |
+| **GDG SPMigrator** | Move SharePoint structures, permissions and content | migration orchestration, provisioning, ACL/identity mapping and recovery |
+| **GDG.SPFX.Bridge** | Connect modern SharePoint experiences to server-side .NET | SPFx, browser/server messaging, host context, CRUD integration and lifecycle coordination |
+| **GDG.SP.TemplateManager** | Capture and reuse SharePoint configurations and selected content | portable `.gdgspt` packages, inspection, compatibility analysis, target provisioning, gallery integration and LIVE-oriented validation |
 
 ---
 
@@ -87,22 +83,23 @@ These three products address three different SharePoint engineering problems:
 
 <div align="center">
 
-### SQL & ADO.NET Provider for Microsoft SharePoint
+### ADO.NET Data Provider and Relational Engine for Microsoft SharePoint
 
 ![REST](https://img.shields.io/badge/runtime-REST--only-00A4EF?style=for-the-badge)
 ![ADO.NET](https://img.shields.io/badge/API-ADO.NET-512BD4?style=for-the-badge)
 ![SPO](https://img.shields.io/badge/SharePoint-Online-038387?style=for-the-badge)
 ![SE](https://img.shields.io/badge/SharePoint_Server-SE-038387?style=for-the-badge)
+![RC](https://img.shields.io/badge/release_candidate-1.0.2--rc.1-F59E0B?style=for-the-badge)
 
-[**Open the public product showcase →**](https://github.com/gdelgiovine/GDG.SP.ADOProvider-Showcase)
+[**Public product showcase →**](https://github.com/gdelgiovine/GDG.SP.ADOProvider-Showcase) · [**Video demo on LinkedIn →**](https://www.linkedin.com/posts/gabriele-del-giovine-976626_gdgspadoprovider-in-azione-demo-livello-ugcPost-7519042942741905409-Ib1n)
 
 </div>
 
-`GDG.SP.ADOProvider` exposes SharePoint lists and document libraries through standard ADO.NET abstractions and SQL-like queries.
+`GDG.SP.ADOProvider` exposes SharePoint lists, document libraries and list attachments through a standard **ADO.NET programming model** and a SQL-like language. It has a **REST-only runtime**, with no CSOM dependency, and targets `net48` and `net8.0`, against **SharePoint Online** and **SharePoint Server Subscription Edition**.
 
-Application code can use:
+### Developer-facing API
 
-```text
+~~~text
 DbProviderFactory
 DbConnection
 DbCommand
@@ -110,78 +107,53 @@ DbParameter
 DbDataReader
 DbDataAdapter
 DbCommandBuilder
-```
+~~~
 
-instead of embedding SharePoint-specific REST plumbing throughout the application.
+Rather than writing HTTP/OData/CAML plumbing in each application, client code uses familiar data-access abstractions.
 
-### Example
-
-```sql
-SELECT O.ID,
-       O.Title,
-       C.Title AS CustomerName
+~~~sql
+SELECT O.ID, O.Title, C.Title AS CustomerName
 FROM Orders O
-INNER JOIN Customers C
-    ON O.CustomerId = C.ID
+INNER JOIN Customers C ON O.CustomerId = C.ID
 WHERE O.Status = @Status
 ORDER BY O.ID;
-```
+~~~
 
 ### Engineering behind the product
 
-The project includes:
+- SQL tokenizer, parser, AST, binding and relational execution.
+- `JOIN`, correlated and set-operation patterns, aggregation/`GROUP BY`/`HAVING`, `DISTINCT`, `UNION` and `UNION ALL`.
+- SQL-like `INSERT`, `UPDATE` and `DELETE`, supported DDL/DCL and parameterized commands.
+- Query planner with **semantic eligibility before cost**; cost-based optimization, plan caching and safe local execution fallback.
+- CAML via SharePoint REST, selective OData `$select`/`$expand`/`$filter`, `$batch` and supported server-side aggregation paths.
+- Identity-aware metadata caching, SharePoint change-log invalidation, digest caching and concurrency controls.
+- Document-library content operations, folder-scoped selection and the `$ATTACHMENTS(...)` model for SharePoint list files.
+- Explicit scan/mutation limits designed to avoid silently incomplete relational results.
 
-- SQL tokenizer/parser and AST
-- relational query engine
-- JOIN processing
-- aggregation engine
-- `DISTINCT`
-- `UNION` / `UNION ALL`
-- expression evaluation
-- DML including `INSERT ... SELECT`
-- metadata/schema handling
-- document libraries
-- SharePoint list attachments
-- REST/CAML/OData translation
-- `$batch`
-- server-side and local execution strategies
-- cost-based planning
-- semantic eligibility checks
-- metadata and request-digest caching
-- async ADO.NET APIs and cancellation
-- multi-target `net48;net8.0`
+### From a provider API to working line-of-business demonstrations
 
-### Architecture principle
+Three independent **Windows Forms MiniERP variants** now demonstrate the same three-list scenario: **Agents, Customers, Orders**, with lookup relationships and item attachments.
 
-> **Semantic eligibility before cost.**
+| Demonstration | Main data-access pattern | Engineering proof |
+|---|---|---|
+| **MiniERP** | ADO.NET, `DataTable`, UI binding and explicit parameterized commands | Multi-list CRUD, lookup integrity, attachment upload/download/replace/rename/delete and responsive task-based UI |
+| **MiniERP Classic** | Straightforward C#, `SharePointDataAdapter.Fill(DataTable)` and explicit commands | A deliberately readable migration path for traditional WinForms and VB.NET developers |
+| **MiniERP Dapper** | Dapper + typed C# POCOs and `BindingList<T>` | Reuse of the provider with a mainstream micro-ORM, without direct SharePoint API calls in application code |
 
-The optimizer may compare execution strategies only after determining that they preserve the requested result.
+The desktop examples reuse a connection-management component supporting **WebView2 interactive sign-in, MFA and remembered sessions**, plus the provider's supported SharePoint Server authentication options. The sample applications are demonstrations, not claims of full ERP or transactional-database semantics.
 
-That means the provider can push work to SharePoint when safe and use local relational execution when SharePoint cannot represent the requested operation correctly.
+### Validation and release discipline
 
-### Validation
+The source currently documents **`1.0.2-rc.1` as a release candidate**, **not** as a published stable release or public NuGet package. It includes Windows demo applications, offline conformance suites, SharePoint Online/Server SE LIVE test paths, and formal packaging/validation gates for both target frameworks. Recent work also addresses plan-cache concurrency.
 
-The provider is not parser-only or mock infrastructure.
-
-It has been validated with dedicated test suites against:
-
-```text
-.NET Framework 4.8
-.NET 8.0
-
-        ×
-
-SharePoint Online
-SharePoint Server Subscription Edition
-```
+> **Engineering principle:** the provider must preserve query semantics and make SharePoint's actual limits explicit; it does not pretend that SharePoint is SQL Server.
 
 ### What this project demonstrates
 
-![Data Architecture](https://img.shields.io/badge/Data_Architecture-advanced-512BD4?style=flat-square)
-![Compiler](https://img.shields.io/badge/SQL_Parsing_%26_AST-implemented-512BD4?style=flat-square)
-![Optimizer](https://img.shields.io/badge/Query_Planning_%26_Optimization-implemented-512BD4?style=flat-square)
-![REST](https://img.shields.io/badge/SharePoint_REST-deep_integration-038387?style=flat-square)
-![Testing](https://img.shields.io/badge/LIVE_Validation-Online_%2B_SE-2EA44F?style=flat-square)
+![Data Architecture](https://img.shields.io/badge/Relational_Engine-SQL_&_Optimization-512BD4?style=flat-square)
+![Integration](https://img.shields.io/badge/Integration-SharePoint_REST-038387?style=flat-square)
+![Apps](https://img.shields.io/badge/Examples-WinForms_&_Dapper-0B5CAD?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Release_Candidate-F59E0B?style=flat-square)
 
 ---
 
@@ -355,9 +327,77 @@ The project includes extensive investigation of SharePoint list refresh mechanis
 
 ---
 
+# 4. GDG.SP.TemplateManager
+
+<div align="center">
+
+### Reusable SharePoint Templates, Inspection and Provisioning
+
+![Package](https://img.shields.io/badge/Package-.gdgspt-6A5099?style=for-the-badge)
+![SharePoint](https://img.shields.io/badge/Platform-SharePoint_Online-038387?style=for-the-badge)
+![UI](https://img.shields.io/badge/Desktop-WinForms_%7C_.NET_4.8-512BD4?style=for-the-badge)
+![Candidate](https://img.shields.io/badge/Source_Candidate-0.6.7-F59E0B?style=for-the-badge)
+
+</div>
+
+`GDG.SP.TemplateManager` is a Windows Forms application for **capturing, storing, inspecting and reapplying SharePoint Online structures and selected content**. Its reusable **`.gdgspt` package** is separate from the source site and can be provisioned again later.
+
+Unlike a one-off migration tool, TemplateManager focuses on **repeatable provisioning from reusable artifacts**.
+
+### End-to-end workflow
+
+~~~text
+SharePoint Online SOURCE
+          |
+   Capture / Select
+          v
+   Portable .gdgspt
+          |
+  Template Library
+   /     |       \
+Inspect  Analyze   Provision
+                  |
+                  v
+         SharePoint Online TARGET
+~~~
+
+Direct SOURCE-to-TARGET provisioning also exists; it uses the shared extraction/package/provisioning pipeline rather than a second independent engine.
+
+### Engineering scope
+
+- **Capture** site/subsite structures, lists and document libraries; optionally include list items, folders, files and attachments with granular selection.
+- **Package format** preserving metadata and dependencies, designed for reuse without requiring the original SOURCE during subsequent provisioning.
+- **Template Library** for managed packages, import/export and operational provisioning.
+- **Template Inspector**, covering manifest, hierarchy, fields, content types, views, content, navigation, features, security and dependencies.
+- **BOM/SBOM and compatibility analysis**, including SOURCE-only analysis and TARGET preflight before applying a package.
+- **Provisioning** with Lookup-reference remapping, field/content-type reconstruction, optional content and security handling; support for new sites and selected site templates.
+- **Runtime TARGET parameterization:** override a new site/subsite's title/URL, or a new list/library's title/URL, without rewriting original package metadata.
+- **SharePoint native Gallery support** for the portable subset of site/list/library designs, while complex content and permissions remain in GDG extended provisioning.
+- **Observability:** operation phases, progress, activity logs, pause/stop controls and an integrated test runner.
+
+### Opt-in CSOM read optimizations
+
+The 0.6.7 source candidate adds independent, explicitly enabled optimizations for extraction and provisioning metadata reads. A benchmark-oriented test suite compares standard **OFF** and optimized **ON** paths and checks fidelity, rather than assuming fewer round trips automatically imply equivalent results.
+
+### Platform and validation status
+
+- **Runtime:** Windows Forms, `.NET Framework 4.8`; development with Visual Studio 2026.
+- **Source/TARGET:** SharePoint Online. The solution uses **CSOM** for relevant extraction and provisioning operations, distinct from ADOProvider's REST-only architecture.
+- **Status:** the repository documents a **0.6.7 candidate** and integrated MSTest/WinForms TestRunner work; the newer optimization/benchmark changes should not be presented as production-certified without their full Windows and LIVE acceptance evidence.
+
+### Why it matters
+
+> **SPMigrator moves workloads; TemplateManager turns selected SharePoint configurations into inspectable, portable assets that can be provisioned repeatedly.**
+
+This project demonstrates reusable packaging, dependency modeling, compatibility analysis, real SharePoint provisioning, conservative Gallery translation, GUI engineering and testable operational workflows.
+
+**Source availability:** currently private. Technical demonstrations or evaluations can be discussed directly.
+
+---
+
 # The common engineering pattern
 
-Although the three products solve different problems, the same engineering approach appears repeatedly.
+Although the four SharePoint products solve different problems, the same engineering approach appears repeatedly.
 
 ```mermaid
 flowchart TB
@@ -400,6 +440,7 @@ ADO.NET provider architecture
 relational query engines
 query planners and optimizers
 migration pipelines
+reusable SharePoint template packages and provisioning
 browser/server integration protocols
 Windows service architectures
 multi-process communication
@@ -414,6 +455,7 @@ SharePoint Server 2019
 SharePoint REST
 CAML
 OData
+CSOM (TemplateManager; ADOProvider remains REST-only)
 SPFx
 Microsoft 365
 authentication / identities / permissions
@@ -442,6 +484,7 @@ multi-target libraries
 architecture documentation
 regression suites
 live integration tests
+integrated test runners and reproducible benchmarks
 compatibility matrices
 configuration tooling
 diagnostics and logging
@@ -517,7 +560,7 @@ Relevant scenarios include:
 - ISVs integrating SharePoint into existing .NET products
 - enterprise teams modernizing .NET Framework systems
 - organizations with complex SharePoint Online / Server coexistence
-- migration-product teams
+- migration-product and SharePoint provisioning teams
 - product engineering groups that need senior architecture and implementation capability
 
 Possible collaboration models include:
@@ -589,13 +632,13 @@ My work focuses primarily on:
 
 [![GitHub](https://img.shields.io/badge/GitHub-gdelgiovine-181717?style=for-the-badge&logo=github)](https://github.com/gdelgiovine)
 
-### Interested specifically in GDG.SP.ADOProvider?
+### Interested in a product demonstration or technical evaluation?
 
 [![ADOProvider Showcase](https://img.shields.io/badge/Open-GDG.SP.ADOProvider_Showcase-038387?style=for-the-badge)](https://github.com/gdelgiovine/GDG.SP.ADOProvider-Showcase)
 
 <br/>
 
-**I am open to long-term collaborations with software companies, Microsoft partners, ISVs and enterprise engineering teams.**
+**I am open to long-term collaborations, technical evaluations and product partnerships with software companies, Microsoft partners, ISVs and enterprise engineering teams.**
 
 </div>
 
