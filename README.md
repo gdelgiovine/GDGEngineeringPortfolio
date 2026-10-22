@@ -79,6 +79,23 @@ flowchart LR
 
 ---
 
+## Official website & public demonstrations
+
+The [GDG Engineering official website](https://www.gabrieledelgiovine.it/) presents the SharePoint product family. The publicly accessible site currently exposes these product descriptions together on its **home page**; no separate product-detail URLs have been verified. The LinkedIn links below point to identifiable product demonstrations or technical posts.
+
+| Product | Official website | Public demo / LinkedIn post |
+|---|---|---|
+| **GDG.SP.ADOProvider** | [Official product overview](https://www.gabrieledelgiovine.it/) | [ADOProvider in action — video demo](https://www.linkedin.com/posts/gabriele-del-giovine-976626_gdgspadoprovider-in-azione-demo-livello-ugcPost-7519042942741905409-Ib1n) · [Technical product post](https://www.linkedin.com/posts/gabriele-del-giovine-976626_httpslnkdindreeup6a-treat-sharepoint-activity-7500930892006219776-1Kx8) |
+| **GDG SPMigrator / GDG.SP.Migration** | [Official product overview](https://www.gabrieledelgiovine.it/) | [Migration facts and outcomes — LinkedIn post](https://it.linkedin.com/posts/gabriele-del-giovine-976626_gdg-spmigration-per-sharepoint-fatti-activity-7508832210918080514-rfpq) |
+| **GDG.SPFX.Bridge / GDGSPFxBridge** | [Official product overview](https://www.gabrieledelgiovine.it/) | [SPFx ↔ Wisej.NET — video demo](https://www.linkedin.com/posts/gabriele-del-giovine-976626_what-youre-seeing-in-the-video-is-sharepoint-activity-7497553165131898881-JQap) |
+| **GDG.SP.TemplateManager** | [Official product overview](https://www.gabrieledelgiovine.it/) | Video link not yet publicly verified |
+
+**Other public demonstration:** [Passero Framework — Episode 1, low-code approach (LinkedIn video post)](https://it.linkedin.com/posts/gabriele-del-giovine-976626_passero-framework-ep1-la-modalit%C3%A0-low-activity-7400860628934070272-fPsy).
+
+[LinkedIn profile and posts](https://it.linkedin.com/in/gabriele-del-giovine-976626) · [Corporate contact page](https://www.gabrieledelgiovine.it/front_page/contact/)
+
+---
+
 # 1. GDG.SP.ADOProvider
 
 <div align="center">
@@ -91,7 +108,7 @@ flowchart LR
 ![SE](https://img.shields.io/badge/SharePoint_Server-SE-038387?style=for-the-badge)
 ![RC](https://img.shields.io/badge/release_candidate-1.0.2--rc.1-F59E0B?style=for-the-badge)
 
-[**Public product showcase →**](https://github.com/gdelgiovine/GDG.SP.ADOProvider-Showcase) · [**Video demo on LinkedIn →**](https://www.linkedin.com/posts/gabriele-del-giovine-976626_gdgspadoprovider-in-azione-demo-livello-ugcPost-7519042942741905409-Ib1n)
+[**Official website →**](https://www.gabrieledelgiovine.it/) · [**Public product showcase →**](https://github.com/gdelgiovine/GDG.SP.ADOProvider-Showcase) · [**Video demo on LinkedIn →**](https://www.linkedin.com/posts/gabriele-del-giovine-976626_gdgspadoprovider-in-azione-demo-livello-ugcPost-7519042942741905409-Ib1n) · [**Technical LinkedIn post →**](https://www.linkedin.com/posts/gabriele-del-giovine-976626_httpslnkdindreeup6a-treat-sharepoint-activity-7500930892006219776-1Kx8)
 
 </div>
 
@@ -169,6 +186,8 @@ The source currently documents **`1.0.2-rc.1` as a release candidate**, **not** 
 
 </div>
 
+[**Official website →**](https://www.gabrieledelgiovine.it/) · [**LinkedIn migration results →**](https://it.linkedin.com/posts/gabriele-del-giovine-976626_gdg-spmigration-per-sharepoint-fatti-activity-7508832210918080514-rfpq)
+
 `GDG SPMigrator` addresses the practical complexity of moving SharePoint workloads from on-premises environments to Microsoft 365.
 
 The product is built around a migration pipeline rather than a simple copy command.
@@ -239,6 +258,8 @@ The project therefore demonstrates more than SharePoint API knowledge:
 ![.NET](https://img.shields.io/badge/.NET-Application_Bridge-512BD4?style=for-the-badge)
 
 </div>
+
+[**Official website →**](https://www.gabrieledelgiovine.it/) · [**Watch the SPFx/Wisej.NET video demonstration →**](https://www.linkedin.com/posts/gabriele-del-giovine-976626_what-youre-seeing-in-the-video-is-sharepoint-activity-7497553165131898881-JQap)
 
 `GDG.SPFX.Bridge` connects SharePoint Framework experiences with server-side .NET applications through a controlled bidirectional integration channel.
 
@@ -339,6 +360,8 @@ The project includes extensive investigation of SharePoint list refresh mechanis
 ![Candidate](https://img.shields.io/badge/Source_Candidate-0.6.7-F59E0B?style=for-the-badge)
 
 </div>
+
+[**Official website — SharePoint templates overview →**](https://www.gabrieledelgiovine.it/)
 
 `GDG.SP.TemplateManager` is a Windows Forms application for **capturing, storing, inspecting and reapplying SharePoint Online structures and selected content**. Its reusable **`.gdgspt` package** is separate from the source site and can be provisioned again later.
 
@@ -523,6 +546,8 @@ This project demonstrates low-level Windows integration and managed/native archi
 
 [![Repository](https://img.shields.io/badge/GitHub-PasseroFramework-181717?style=for-the-badge&logo=github)](https://github.com/gdelgiovine/PasseroFramework)
 
+[**LinkedIn post with video — Passero Framework Ep. 1 →**](https://it.linkedin.com/posts/gabriele-del-giovine-976626_passero-framework-ep1-la-modalit%C3%A0-low-activity-7400860628934070272-fPsy)
+
 An MVVM-oriented framework for enterprise applications, with areas including:
 
 - generic ViewModels
@@ -629,6 +654,8 @@ My work focuses primarily on:
 <div align="center">
 
 ### Looking for senior .NET / SharePoint engineering capability?
+
+[**Official website**](https://www.gabrieledelgiovine.it/) · [**LinkedIn profile**](https://it.linkedin.com/in/gabriele-del-giovine-976626) · [**Contact**](https://www.gabrieledelgiovine.it/front_page/contact/)
 
 [![GitHub](https://img.shields.io/badge/GitHub-gdelgiovine-181717?style=for-the-badge&logo=github)](https://github.com/gdelgiovine)
 
